@@ -9,7 +9,6 @@
 <meta property="og:description" content="15 minutes, one take, live on stream: real AI agents at desks inside Minecraft.">
 <meta property="og:image" content="https://omoresearch.github.io/omo-space-demo/poster.jpg">
 <meta property="og:type" content="video.other">
-<meta property="og:video" content="https://omoresearch.github.io/omo-space-demo/omo-space-demo-720p.mp4">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="omo-mark.svg" type="image/svg+xml">
 <style>
@@ -60,10 +59,7 @@
     the rooms, the agents, the edit review, the publishing desk, and an underground robot lab built from one prompt.</p>
 
   <div class="player">
-    <video id="v" controls preload="metadata" playsinline poster="poster.jpg">
-      <source src="omo-space-demo-720p.mp4" type="video/mp4">
-      Your browser can't play this video. <a href="omo-space-demo-720p.mp4">Download it</a>.
-    </video>
+    <video id="v" controls preload="metadata" playsinline poster="poster.jpg"></video>
   </div>
 
   <div class="meta">
@@ -93,8 +89,15 @@
     Made by <a href="https://omo.sh">Omo Research</a>.
   </footer>
 </main>
+<script src="hls.min.js"></script>
 <script>
   const v = document.getElementById('v');
+  // The original 1080p stream, cut into ~8 s pieces (HLS) so it starts at once and seeks anywhere.
+  const SRC = 'hls/index.m3u8';
+  if (window.Hls && Hls.isSupported()) { const h = new Hls(); h.loadSource(SRC); h.attachMedia(v); }  // most browsers
+  else if (v.canPlayType('application/vnd.apple.mpegurl')) v.src = SRC;                            // iPhone Safari
+  else v.outerHTML = '<p style="color:#fff;padding:24px">This browser can\'t stream the video. ' +
+    '<a style="color:#fff" href="https://github.com/omoresearch/omo-space/releases/download/demo-2026-10-27/omo-space-demo-2026-10-27.mp4">Download the MP4</a>.</p>';
   const items = [...document.querySelectorAll('#ch li')];
   const starts = items.map(li => +li.querySelector('button').dataset.t);
   items.forEach(li => li.querySelector('button').addEventListener('click', e => {
